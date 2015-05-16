@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
         FILE_LOG(logDEBUG) << "A loop with " << count << " iterations";
         for (int i = 0; i != count; ++i)
         {
-	        FILE_LOG(logDEBUG1) << "the counter i = " << i;
+	        FILE_LOG(ldebug1) << "the counter i = " << i;
         }
         return 0;
     }
@@ -27,12 +27,13 @@ int main(int argc, char* argv[])
 #if 0
 
 // initialize
-FILELog::ReportingLevel() = logDEBUG3;
+FILELog::ReportingLevel() = ldebug3;
 FILE* log_fd = fopen( "mylogfile.txt", "w" );
 Output2FILE::Stream() = log_fd;
 
 // use
-FILE_LOG(logWARNING) << "Ops, variable x should be " << expectedX << "; is " << realX;
-
+FILE_LOG(lwarning) << "Ops, variable x should be " << expectedX << "; is " << realX;
+// or 
+L_(lwarning) << "Ops, variable x should be " << expectedX << "; is " << realX;
 
 #endif 
