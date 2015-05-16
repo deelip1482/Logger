@@ -1,3 +1,4 @@
+
 #ifndef __LOG_H__
 #define __LOG_H__
 
@@ -7,7 +8,8 @@
 
 inline std::string NowTime();
 
-enum TLogLevel {logERROR, logWARNING, logINFO, logDEBUG, logDEBUG1, logDEBUG2, logDEBUG3, logDEBUG4};
+//enum TLogLevel {logERROR, logWARNING, logINFO, logDEBUG, logDEBUG1, logDEBUG2, logDEBUG3, logDEBUG4};
+enum TLogLevel {lerror, lwarning, linfo, ldebug, ldebug1, ldebug2, ldebug3, ldebug4};
 
 template <typename T>
 class Log
@@ -15,7 +17,7 @@ class Log
 public:
     Log();
     virtual ~Log();
-    std::ostringstream& Get(TLogLevel level = logINFO);
+    std::ostringstream& Get(TLogLevel level = linfo);
 public:
     static TLogLevel& ReportingLevel();
     static std::string ToString(TLogLevel level);
@@ -37,7 +39,7 @@ std::ostringstream& Log<T>::Get(TLogLevel level)
 {
     os << "- " << NowTime();
     os << " " << ToString(level) << ": ";
-    os << std::string(level > logDEBUG ? level - logDEBUG : 0, '\t');
+    os << std::string(level > ldebug ? level - ldebug : 0, '\t');
     return os;
 }
 
@@ -51,7 +53,7 @@ Log<T>::~Log()
 template <typename T>
 TLogLevel& Log<T>::ReportingLevel()
 {
-    static TLogLevel reportingLevel = logDEBUG4;
+    static TLogLevel reportingLevel = ldebug4;
     return reportingLevel;
 }
 
@@ -66,23 +68,23 @@ template <typename T>
 TLogLevel Log<T>::FromString(const std::string& level)
 {
     if (level == "DEBUG4")
-        return logDEBUG4;
+        return ldebug4;
     if (level == "DEBUG3")
-        return logDEBUG3;
+        return ldebug3;
     if (level == "DEBUG2")
-        return logDEBUG2;
+        return ldebug2;
     if (level == "DEBUG1")
-        return logDEBUG1;
+        return ldebug1;
     if (level == "DEBUG")
-        return logDEBUG;
+        return ldebug;
     if (level == "INFO")
-        return logINFO;
+        return linfo;
     if (level == "WARNING")
-        return logWARNING;
+        return lwarning;
     if (level == "ERROR")
-        return logERROR;
-    Log<T>().Get(logWARNING) << "Unknown logging level '" << level << "'. Using INFO level as default.";
-    return logINFO;
+        return lerror;
+    Log<T>().Get(lwarning) << "Unknown logging level '" << level << "'. Using INFO level as default.";
+    return linfo;
 }
 
 class Output2FILE
@@ -123,13 +125,18 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
 //typedef Log<Output2FILE> FILELog;
 
 #ifndef FILELOG_MAX_LEVEL
-#define FILELOG_MAX_LEVEL logDEBUG4
+#define FILELOG_MAX_LEVEL ldebug4
 #endif
 
 #define FILE_LOG(level) \
     if (level > FILELOG_MAX_LEVEL) ;\
     else if (level > FILELog::ReportingLevel() || !Output2FILE::Stream()) ; \
     else FILELog().Get(level)
+
+#define L_(level) \
+if (level > FILELOG_MAX_LEVEL) ;\
+else if (level > FILELog::ReportingLevel() || !Output2FILE::Stream()) ; \
+else FILELog().Get(level)
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 
