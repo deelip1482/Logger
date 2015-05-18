@@ -185,7 +185,8 @@ inline void initLogger(const char * file, TLogLevel level)
 
 inline void endLogger()
 {
-    fclose(Output2FILE::Stream());
+	if (Output2FILE::Stream())
+		fclose(Output2FILE::Stream());
 }
 
 #endif //__LOG_H__
